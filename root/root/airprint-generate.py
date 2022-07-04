@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Copyright (c) 2010 Timothy J Fontaine <tjfontaine@atxconsulting.com>
@@ -22,9 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import cups, os, optparse, re, urlparse
+import cups, os, optparse, re
+import urllib.parse as urlparse
 import os.path
-from StringIO import StringIO
+from io import StringIO
 
 from xml.dom.minidom import parseString
 from xml.dom import minidom
@@ -178,6 +179,16 @@ class AirPrintGenerate(object):
                 ptype = Element('txt-record')
                 ptype.text = 'printer-type=%s' % (hex(v['printer-type']))
                 service.append(ptype)
+
+                if attrs['color-supported']:
+                    color = Element('txt-record')
+                    color.text = 'Color=T'
+                    service.append(color)
+
+                if attrs['media-default'] == 'iso_a4_210x297mm':
+                    max_paper = Element('txt-record')
+                    max_paper.text = 'PaperMax=legal-A4'
+                    service.append(max_paper)
 
                 pdl = Element('txt-record')
                 fmts = []
